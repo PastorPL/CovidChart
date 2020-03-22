@@ -1,0 +1,78 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <form name="editForm" role="form" novalidate (ngSubmit)="save()" [formGroup]="editForm">
+            <h2 id="jhi-entry-heading" jhiTranslate="covChartApp.entry.home.createOrEditLabel">Create or edit a Entry</h2>
+
+            <div>
+                <jhi-alert-error></jhi-alert-error>
+
+                <div class="form-group" [hidden]="!editForm.get('id')!.value">
+                    <label for="id" jhiTranslate="global.field.id">ID</label>
+                    <input type="text" class="form-control" id="id" name="id" formControlName="id" readonly />
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="covChartApp.entry.province" for="field_province">Province</label>
+                    <input type="text" class="form-control" name="province" id="field_province"
+                           formControlName="province"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="covChartApp.entry.country" for="field_country">Country</label>
+                    <input type="text" class="form-control" name="country" id="field_country"
+                           formControlName="country"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="covChartApp.entry.lastUpdate" for="field_lastUpdate">Last Update</label>
+                    <div class="input-group">
+                        <input id="field_lastUpdate" type="text" class="form-control" name="lastUpdate" ngbDatepicker #lastUpdateDp="ngbDatepicker" formControlName="lastUpdate"/>
+                        <span class="input-group-append">
+                            <button type="button" class="btn btn-secondary" (click)="lastUpdateDp.toggle()"><fa-icon icon="calendar-alt"></fa-icon></button>
+                        </span>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="covChartApp.entry.confirmed" for="field_confirmed">Confirmed</label>
+                    <input type="number" class="form-control" name="confirmed" id="field_confirmed"
+                           formControlName="confirmed"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="covChartApp.entry.deaths" for="field_deaths">Deaths</label>
+                    <input type="number" class="form-control" name="deaths" id="field_deaths"
+                           formControlName="deaths"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="covChartApp.entry.recovered" for="field_recovered">Recovered</label>
+                    <input type="number" class="form-control" name="recovered" id="field_recovered"
+                           formControlName="recovered"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="covChartApp.entry.lat" for="field_lat">Lat</label>
+                    <input type="number" class="form-control" name="lat" id="field_lat"
+                           formControlName="lat"/>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-control-label" jhiTranslate="covChartApp.entry.lon" for="field_lon">Lon</label>
+                    <input type="number" class="form-control" name="lon" id="field_lon"
+                           formControlName="lon"/>
+                </div>
+            </div>
+
+            <div>
+                <button type="button" id="cancel-save" class="btn btn-secondary" (click)="previousState()">
+                    <fa-icon icon="ban"></fa-icon>&nbsp;<span jhiTranslate="entity.action.cancel">Cancel</span>
+                </button>
+
+                <button type="submit" id="save-entity" [disabled]="editForm.invalid || isSaving" class="btn btn-primary">
+                    <fa-icon icon="save"></fa-icon>&nbsp;<span jhiTranslate="entity.action.save">Save</span>
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

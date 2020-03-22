@@ -1,0 +1,58 @@
+<div class="row justify-content-center">
+    <div class="col-8">
+        <div *ngIf="entry">
+            <h2><span jhiTranslate="covChartApp.entry.detail.title">Entry</span> {{ entry.id }}</h2>
+
+            <hr>
+
+            <jhi-alert-error></jhi-alert-error>
+
+            <dl class="row-md jh-entity-details">
+                <dt><span jhiTranslate="covChartApp.entry.province">Province</span></dt>
+                <dd>
+                    <span>{{ entry.province }}</span>
+                </dd>
+                <dt><span jhiTranslate="covChartApp.entry.country">Country</span></dt>
+                <dd>
+                    <span>{{ entry.country }}</span>
+                </dd>
+                <dt><span jhiTranslate="covChartApp.entry.lastUpdate">Last Update</span></dt>
+                <dd>
+                    <span>{{ entry.lastUpdate }}</span>
+                </dd>
+                <dt><span jhiTranslate="covChartApp.entry.confirmed">Confirmed</span></dt>
+                <dd>
+                    <span>{{ entry.confirmed }}</span>
+                </dd>
+                <dt><span jhiTranslate="covChartApp.entry.deaths">Deaths</span></dt>
+                <dd>
+                    <span>{{ entry.deaths }}</span>
+                </dd>
+                <dt><span jhiTranslate="covChartApp.entry.recovered">Recovered</span></dt>
+                <dd>
+                    <span>{{ entry.recovered }}</span>
+                </dd>
+                <dt><span jhiTranslate="covChartApp.entry.lat">Lat</span></dt>
+                <dd>
+                    <span>{{ entry.lat }}</span>
+                </dd>
+                <dt><span jhiTranslate="covChartApp.entry.lon">Lon</span></dt>
+                <dd>
+                    <span>{{ entry.lon }}</span>
+                </dd>
+            </dl>
+
+            <button type="submit"
+                    (click)="previousState()"
+                    class="btn btn-info">
+                <fa-icon icon="arrow-left"></fa-icon>&nbsp;<span jhiTranslate="entity.action.back">Back</span>
+            </button>
+
+            <button type="button"
+                    [routerLink]="['/entry', entry.id, 'edit']"
+                    class="btn btn-primary">
+                <fa-icon icon="pencil-alt"></fa-icon>&nbsp;<span jhiTranslate="entity.action.edit">Edit</span>
+            </button>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,11 @@
+entity Entry {
+	province String
+    country String
+    lastUpdate LocalDate
+    confirmed Integer
+    deaths Integer
+    recovered Integer
+    lat Double
+    lon Double
+}
+

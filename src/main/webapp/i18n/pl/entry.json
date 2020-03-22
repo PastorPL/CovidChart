@@ -1,0 +1,29 @@
+{
+  "covChartApp": {
+    "entry": {
+      "home": {
+        "title": "Entry",
+        "createLabel": "Dodaj Entry",
+        "createOrEditLabel": "Dodaj lub edytuj: Entry",
+        "notFound": "No Entries found"
+      },
+      "created": "Utworzono nowy obiekt typu Entry z identyfikatorem {{ param }}",
+      "updated": "Uaktualniono obiekt typu Entry z identyfikatorem {{ param }}",
+      "deleted": "Usunięto obiekt typu Entry z identyfikatorem {{ param }}",
+      "delete": {
+        "question": "Czy na pewno chcesz usunąć Entry {{ id }}?"
+      },
+      "detail": {
+        "title": "Entry"
+      },
+      "province": "Province",
+      "country": "Country",
+      "lastUpdate": "Last Update",
+      "confirmed": "Confirmed",
+      "deaths": "Deaths",
+      "recovered": "Recovered",
+      "lat": "Lat",
+      "lon": "Lon"
+    }
+  }
+}

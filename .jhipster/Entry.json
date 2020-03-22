@@ -1,0 +1,49 @@
+{
+    "name": "Entry",
+    "fields": [
+        {
+            "fieldName": "province",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "country",
+            "fieldType": "String"
+        },
+        {
+            "fieldName": "lastUpdate",
+            "fieldType": "LocalDate"
+        },
+        {
+            "fieldName": "confirmed",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "deaths",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "recovered",
+            "fieldType": "Integer"
+        },
+        {
+            "fieldName": "lat",
+            "fieldType": "Double"
+        },
+        {
+            "fieldName": "lon",
+            "fieldType": "Double"
+        }
+    ],
+    "relationships": [],
+    "changelogDate": "20200321190100",
+    "entityTableName": "entry",
+    "dto": "no",
+    "pagination": "no",
+    "service": "no",
+    "jpaMetamodelFiltering": false,
+    "fluentMethods": true,
+    "readOnly": false,
+    "embedded": false,
+    "clientRootFolder": "",
+    "applications": "*"
+}
