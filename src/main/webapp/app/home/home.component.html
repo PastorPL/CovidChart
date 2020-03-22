@@ -7,6 +7,10 @@
             <li class="list-group-item" *ngFor="let el in files">{{ el }}</li>
         </ul>
     </div>
+    <div>
+        <button class="btn btn-primary" (click)="uploadFiles()" *ngIf="!loadingFiles">Upload data</button>
+        <jhi-spinner *ngIf="loadingFiles"></jhi-spinner>
+    </div>
 
 <!--    <div class="col-md-3">-->
 <!--        <span class="hipster img-fluid rounded"></span>-->

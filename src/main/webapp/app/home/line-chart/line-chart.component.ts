@@ -115,7 +115,6 @@ export class LineChartComponent implements OnInit {
         ]
       }
     };
-
     this.themeService.setColorschemesOptions(overrides);
   }
 }

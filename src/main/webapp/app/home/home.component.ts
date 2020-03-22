@@ -15,12 +15,12 @@ export class HomeComponent implements OnInit, OnDestroy {
   account: Account | null = null;
   authSubscription?: Subscription;
   files: string[] = [];
+  loadingFiles = false;
 
   constructor(private accountService: AccountService, private loginModalService: LoginModalService, private githubService: GitHubService) {}
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
-    this.githubService.get().subscribe(files => (this.files = files));
   }
 
   isAuthenticated(): boolean {
@@ -35,5 +35,14 @@ export class HomeComponent implements OnInit, OnDestroy {
     if (this.authSubscription) {
       this.authSubscription.unsubscribe();
     }
+  }
+
+  uploadFiles(): void {
+    /* eslint-disable no-console */
+    console.log('Clicked');
+    /* eslint-enable no-console */
+
+    this.loadingFiles = true;
+    this.githubService.get().subscribe(() => (this.loadingFiles = false));
   }
 }
