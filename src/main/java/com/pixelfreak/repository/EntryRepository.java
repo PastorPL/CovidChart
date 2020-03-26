@@ -2,6 +2,7 @@ package com.pixelfreak.repository;
 
 import com.pixelfreak.domain.Entry;
 
+import com.pixelfreak.repository.custom.EntryRepositoryCustom;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
@@ -13,7 +14,7 @@ import java.util.List;
  */
 @SuppressWarnings("unused")
 @Repository
-public interface EntryRepository extends MongoRepository<Entry, String> {
+public interface EntryRepository extends MongoRepository<Entry, String>, EntryRepositoryCustom {
 
     Entry findFirstByOrderByLastUpdateDesc();
 

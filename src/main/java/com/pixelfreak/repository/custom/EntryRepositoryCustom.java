@@ -2,7 +2,7 @@ package com.pixelfreak.repository.custom;
 
 import java.util.List;
 
-public interface EntryCustomRepository {
+public interface EntryRepositoryCustom {
 
     List<String> findAllCountryNames();
 

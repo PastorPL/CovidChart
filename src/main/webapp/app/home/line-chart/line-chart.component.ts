@@ -1,22 +1,21 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { ChartDataSets } from 'chart.js';
 import { Color, Label, ThemeService } from 'ng2-charts';
 import { GitHubService } from 'app/shared/util/git-hub.service';
+import { LineChartDataService } from 'app/home/line-chart/line-chart-data.service';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'jhi-line-chart',
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']
 })
-export class LineChartComponent implements OnInit {
-  lineChartData: ChartDataSets[] = [
-    { data: [85, 72, 11, 75, 77, 75], label: 'Crude oil prices' },
-    { data: [25, 12, 28, 35, 27, 15], label: 'My Data' },
-    { data: [15, 72, 75, 75, 77, 74], label: 'Crude oil prices 2' },
-    { data: [35, 442, 58, 76, 77, 85], label: 'Crude oil prices 3' }
-  ];
+export class LineChartComponent implements OnInit, OnDestroy {
+  dataSub!: Subscription;
+  labelSub!: Subscription;
 
-  lineChartLabels: Label[] = ['January', 'February', 'March', 'April', 'May', 'June'];
+  lineChartData: ChartDataSets[] = [];
+  lineChartLabels: Label[] = [];
 
   lineChartOptions = {
     responsive: true,
@@ -93,7 +92,11 @@ export class LineChartComponent implements OnInit {
   lineChartPlugins = [];
   lineChartType = 'line';
 
-  constructor(private themeService: ThemeService, private githubService: GitHubService) {}
+  constructor(
+    private themeService: ThemeService,
+    private githubService: GitHubService,
+    private lineChartDataService: LineChartDataService
+  ) {}
 
   ngOnInit(): void {
     const overrides = {
@@ -116,5 +119,17 @@ export class LineChartComponent implements OnInit {
       }
     };
     this.themeService.setColorschemesOptions(overrides);
+
+    this.dataSub = this.lineChartDataService.dataSubject.subscribe(data => (this.lineChartData = data));
+    this.labelSub = this.lineChartDataService.labelSubject.subscribe(data => (this.lineChartLabels = data));
+  }
+
+  ngOnDestroy(): void {
+    this.dataSub.unsubscribe();
+    this.labelSub.unsubscribe();
+  }
+
+  showChart(): boolean {
+    return this.lineChartData.length > 0;
   }
 }

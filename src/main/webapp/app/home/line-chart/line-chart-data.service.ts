@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { Subject, Subscription } from 'rxjs';
+import { Subject } from 'rxjs';
 import { ChartDataSets } from 'chart.js';
 import { Label } from 'ng2-charts';
 
@@ -15,12 +15,12 @@ export class LineChartDataService {
 
   constructor() {}
 
-  addData(data: ChartDataSets) {
+  addData(data: ChartDataSets): void {
     this.data.push(data);
     this.dataSubject.next(this.data.slice());
   }
 
-  setLabel(label: Label[]) {
+  setLabel(label: Label[]): void {
     this.labels = label;
     this.labelSubject.next(this.labels.slice());
   }

@@ -1,10 +1,14 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { Subscription } from 'rxjs';
 
 import { LoginModalService } from 'app/core/login/login-modal.service';
 import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { GitHubService } from 'app/shared/util/git-hub.service';
+import { first } from 'rxjs/operators';
+import { LineChartDataService } from 'app/home/line-chart/line-chart-data.service';
+import { IEntry } from 'app/shared/model/entry.model';
+import { Label } from 'ng2-charts';
 
 @Component({
   selector: 'jhi-home',
@@ -17,10 +21,24 @@ export class HomeComponent implements OnInit, OnDestroy {
   files: string[] = [];
   loadingFiles = false;
 
-  constructor(private accountService: AccountService, private loginModalService: LoginModalService, private githubService: GitHubService) {}
+  constructor(
+    private accountService: AccountService,
+    private loginModalService: LoginModalService,
+    private githubService: GitHubService,
+    private lineChartDataService: LineChartDataService
+  ) {}
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
+    this.githubService
+      .getCountries()
+      .pipe(first())
+      .subscribe(countries => {
+        this.files = countries;
+        /* eslint-disable no-console */
+        console.log(this.files);
+        /* eslint-enable no-console */
+      });
   }
 
   isAuthenticated(): boolean {
@@ -37,12 +55,35 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
   }
 
-  uploadFiles(): void {
-    /* eslint-disable no-console */
-    console.log('Clicked');
-    /* eslint-enable no-console */
-
+  addChartValue(): void {
     this.loadingFiles = true;
-    this.githubService.get().subscribe(() => (this.loadingFiles = false));
+  }
+
+  onNewData(country: string): void {
+    let entries: IEntry[] = [];
+    const dataNumbers: number[] = [];
+    const labels: Label[] = [];
+
+    this.githubService
+      .getCountry(country)
+      .pipe(first())
+      .subscribe(data => (entries = data));
+
+    for (const entry of entries) {
+      dataNumbers.push(entry.confirmed!);
+      labels.push(entry.lastUpdate?.format('DD-MM-YYYY')!);
+    }
+
+    for (const entry of entries) {
+      dataNumbers.push(entry.confirmed!);
+      labels.push(entry.lastUpdate?.format('DD-MM-YYYY')!);
+    }
+
+    this.lineChartDataService.addData({ data: dataNumbers, label: country });
+    this.lineChartDataService.setLabel(labels);
+
+    /* eslint-disable no-console */
+    console.log(country);
+    /* eslint-enable no-console */
   }
 }
