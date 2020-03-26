@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { SERVER_API_URL } from 'app/app.constants';
+import { IEntry } from 'app/shared/model/entry.model';
 
 @Injectable({
   providedIn: 'root'
@@ -9,7 +10,11 @@ import { SERVER_API_URL } from 'app/app.constants';
 export class GitHubService {
   constructor(private http: HttpClient) {}
 
-  get(): Observable<string[]> {
-    return this.http.get(SERVER_API_URL + 'api/files') as Observable<string[]>;
+  getCountries(): Observable<string[]> {
+    return this.http.get(SERVER_API_URL + 'api/files/countryName') as Observable<string[]>;
+  }
+
+  getCountry(country: string): Observable<IEntry[]> {
+    return this.http.get(SERVER_API_URL + '/api/files/country/' + country) as Observable<IEntry[]>;
   }
 }

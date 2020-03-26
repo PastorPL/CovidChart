@@ -1,0 +1,8 @@
+diff a/src/main/webapp/app/home/line-chart/line-chart-data.service.ts b/src/main/webapp/app/home/line-chart/line-chart-data.service.ts	(rejected hunks)
+@@ -2,3 +2,3 @@ import { Injectable } from '@angular/core';
+-import {Subject, Subscription} from "rxjs";
+-import {ChartDataSets} from "chart.js";
+-import {Label} from "ng2-charts";
++import { Subject, Subscription } from 'rxjs';
++import { ChartDataSets } from 'chart.js';
++import { Label } from 'ng2-charts';

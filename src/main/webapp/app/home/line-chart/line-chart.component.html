@@ -1,4 +1,4 @@
-<div class="chart-wrapper">
+<div class="chart-wrapper" *ngIf="showChart()">
     <canvas baseChart
             [datasets]="lineChartData"
             [labels]="lineChartLabels"
@@ -8,4 +8,7 @@
             [chartType]="lineChartType"
             [plugins]="lineChartPlugins">
     </canvas>
+</div>
+<div *ngIf="!showChart()">
+    Pick some data!
 </div>
