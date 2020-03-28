@@ -54,4 +54,13 @@ public class DataResource {
         Optional<List<String>> entry = Optional.of(this.entryRepository.findAllCountryNames());
         return ResponseUtil.wrapOrNotFound(entry);
     }
+
+    @GetMapping("/lastUpdate")
+    public ResponseEntity<Entry> getLastUpdateDate() {
+        log.debug("REST request to get last update date");
+        Optional<Entry> entry = Optional.of(this.entryRepository.findFirstByOrderByLastUpdateDesc());
+        return ResponseUtil.wrapOrNotFound(entry);
+    }
+
+
 }

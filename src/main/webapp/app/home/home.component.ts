@@ -8,7 +8,8 @@ import { GitHubService } from 'app/shared/util/git-hub.service';
 import { first } from 'rxjs/operators';
 import { LineChartDataService } from 'app/home/line-chart/line-chart-data.service';
 import { IEntry } from 'app/shared/model/entry.model';
-import { Label } from 'ng2-charts';
+import * as moment from 'moment';
+import { Moment } from 'moment';
 
 @Component({
   selector: 'jhi-home',
@@ -20,6 +21,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   authSubscription?: Subscription;
   files: string[] = [];
   loadingFiles = false;
+  lastUpdate = '';
 
   constructor(
     private accountService: AccountService,
@@ -30,14 +32,17 @@ export class HomeComponent implements OnInit, OnDestroy {
 
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
+    this.githubService.getLastUpdate().subscribe(value => {
+      this.lastUpdate = moment(value.lastUpdate).format('D MMM YYYY');
+      /* eslint-disable no-console */
+      console.log(value);
+      /* eslint-enable no-console */
+    });
     this.githubService
       .getCountries()
       .pipe(first())
       .subscribe(countries => {
         this.files = countries;
-        /* eslint-disable no-console */
-        console.log(this.files);
-        /* eslint-enable no-console */
       });
   }
 
@@ -60,30 +65,33 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   onNewData(country: string): void {
-    let entries: IEntry[] = [];
-    const dataNumbers: number[] = [];
-    const labels: Label[] = [];
-
     this.githubService
       .getCountry(country)
       .pipe(first())
-      .subscribe(data => (entries = data));
+      .subscribe(data => this.updateData(data, country));
+  }
+
+  private updateData(entries: IEntry[], country: string): void {
+    const dataNumbers: number[] = [];
+    // const labels: Label[] = [];
+    const updateTimes: Moment[] = [];
 
     for (const entry of entries) {
       dataNumbers.push(entry.confirmed!);
-      labels.push(entry.lastUpdate?.format('DD-MM-YYYY')!);
+      updateTimes.push(entry.lastUpdate!);
+
+      // labels.push(moment(entry.lastUpdate).format('DD-MM-YYYY'));
     }
 
-    for (const entry of entries) {
-      dataNumbers.push(entry.confirmed!);
-      labels.push(entry.lastUpdate?.format('DD-MM-YYYY')!);
-    }
+    // for (const entry of entries) {
+    //   /* eslint-disable no-console */
+    //   console.log(entry);
+    //   /* eslint-enable no-console */
+    //   dataNumbers.push(entry.confirmed!);
+    //   labels.push(entry.lastUpdate?.format('DD-MM-YYYY')!);
+    // }
 
     this.lineChartDataService.addData({ data: dataNumbers, label: country });
-    this.lineChartDataService.setLabel(labels);
-
-    /* eslint-disable no-console */
-    console.log(country);
-    /* eslint-enable no-console */
+    this.lineChartDataService.setLabel(updateTimes);
   }
 }
