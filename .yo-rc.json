@@ -38,6 +38,8 @@
     "enableTranslation": true,
     "nativeLanguage": "en",
     "languages": ["en", "pl"],
-    "blueprints": []
+    "blueprints": [],
+    "herokuAppName": "cov-chart",
+    "herokuDeployType": "git"
   }
 }
