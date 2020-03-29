@@ -39,7 +39,7 @@
     "nativeLanguage": "en",
     "languages": ["en", "pl"],
     "blueprints": [],
-    "herokuAppName": "cov-chart",
+    "herokuAppName": "covchart",
     "herokuDeployType": "git"
   }
 }
