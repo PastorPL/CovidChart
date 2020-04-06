@@ -1,13 +1,22 @@
-<div class="chart-wrapper" *ngIf="showChart()">
-    <canvas baseChart
-            [datasets]="lineChartData"
-            [labels]="lineChartLabels"
-            [options]="lineChartOptions"
-            [colors]="lineChartColors"
-            [legend]="lineChartLegend"
-            [chartType]="lineChartType"
-            [plugins]="lineChartPlugins">
-    </canvas>
+<div class="linechart-wrapper dark" *ngIf="showChart()">
+    <ngx-charts-line-chart
+                           [view]="view"
+                           [scheme]="colorScheme"
+                           [legend]="legend"
+                           [showXAxisLabel]="showXAxisLabel"
+                           [showYAxisLabel]="showYAxisLabel"
+                           [xAxis]="xAxis"
+                           [yAxis]="yAxis"
+                           [xAxisLabel]="xAxisLabel"
+                           [scheme] = "{domain: ['#9370DB', '#87CEFA', '#FA8072', '#FF7F50', '#90EE90', '#9370DB']}"
+                           [yAxisLabel]="yAxisLabel"
+                           [timeline]="timeline"
+                           [results]="multi"
+                           (select)="onSelect($event)"
+                           (activate)="onActivate($event)"
+                           (deactivate)="onDeactivate($event)"
+    >
+    </ngx-charts-line-chart>
 </div>
 <div *ngIf="!showChart()">
     Pick some data!

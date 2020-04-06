@@ -1,9 +1,8 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
-import { ChartDataSets } from 'chart.js';
-import { Color, Label, ThemeService } from 'ng2-charts';
 import { GitHubService } from 'app/shared/util/git-hub.service';
 import { LineChartDataService } from 'app/home/line-chart/line-chart-data.service';
 import { Subscription } from 'rxjs';
+import { multi } from './data';
 
 @Component({
   selector: 'jhi-line-chart',
@@ -14,115 +13,30 @@ export class LineChartComponent implements OnInit, OnDestroy {
   dataSub!: Subscription;
   labelSub!: Subscription;
 
-  lineChartData: ChartDataSets[] = [];
-  lineChartLabels: Label[] = [];
+  multi: any[] = [];
+  view: any[] = [700, 300];
 
-  lineChartOptions = {
-    responsive: true,
-    scales: {
-      // We use this empty structure as a placeholder for dynamic theming.
-      xAxes: [{}],
-      yAxes: [
-        {
-          id: 'y-axis-0',
-          position: 'left'
-        },
-        {
-          id: 'y-axis-1',
-          position: 'right',
-          gridLines: {
-            color: 'rgba(255,0,0,0.3)'
-          },
-          ticks: {
-            fontColor: 'red'
-          }
-        }
-      ]
-    },
-    annotation: {
-      annotations: [
-        {
-          type: 'line',
-          mode: 'vertical',
-          scaleID: 'x-axis-0',
-          value: 'March',
-          borderColor: 'orange',
-          borderWidth: 2,
-          label: {
-            enabled: true,
-            fontColor: 'orange',
-            content: 'LineAnno'
-          }
-        }
-      ]
-    }
+  // options
+  legend = true;
+  showLabels = true;
+  animations = true;
+  xAxis = true;
+  yAxis = true;
+  showYAxisLabel = true;
+  showXAxisLabel = true;
+  xAxisLabel = 'Year';
+  yAxisLabel = 'Population';
+  timeline = true;
+
+  colorScheme = {
+    domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
   };
 
-  lineChartColors: Color[] = [
-    {
-      // grey
-      backgroundColor: 'rgba(148,159,177,0.2)',
-      borderColor: 'rgba(148,159,177,1)',
-      pointBackgroundColor: 'rgba(148,159,177,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-    },
-    {
-      // dark grey
-      backgroundColor: 'rgba(77,83,96,0.2)',
-      borderColor: 'rgba(77,83,96,1)',
-      pointBackgroundColor: 'rgba(77,83,96,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(77,83,96,1)'
-    },
-    {
-      // red
-      backgroundColor: 'rgba(255,0,0,0.3)',
-      borderColor: 'red',
-      pointBackgroundColor: 'rgba(148,159,177,1)',
-      pointBorderColor: '#fff',
-      pointHoverBackgroundColor: '#fff',
-      pointHoverBorderColor: 'rgba(148,159,177,0.8)'
-    }
-  ];
-
-  lineChartLegend = true;
-  lineChartPlugins = [];
-  lineChartType = 'line';
-
-  constructor(
-    private themeService: ThemeService,
-    private githubService: GitHubService,
-    private lineChartDataService: LineChartDataService
-  ) {}
-
-  ngOnInit(): void {
-    const overrides = {
-      legend: {
-        labels: { fontColor: 'white' }
-      },
-      scales: {
-        xAxes: [
-          {
-            ticks: { fontColor: 'white' },
-            gridLines: { color: 'rgba(255,255,255,0.1)' }
-          }
-        ],
-        yAxes: [
-          {
-            ticks: { fontColor: 'white' },
-            gridLines: { color: 'rgba(255,255,255,0.1)' }
-          }
-        ]
-      }
-    };
-    this.themeService.setColorschemesOptions(overrides);
-
-    this.dataSub = this.lineChartDataService.dataSubject.subscribe(data => (this.lineChartData = data));
-    this.labelSub = this.lineChartDataService.labelSubject.subscribe(data => (this.lineChartLabels = data));
+  constructor(private githubService: GitHubService, private lineChartDataService: LineChartDataService) {
+    Object.assign(this, { multi });
   }
+
+  ngOnInit(): void {}
 
   ngOnDestroy(): void {
     this.dataSub.unsubscribe();
@@ -130,6 +44,18 @@ export class LineChartComponent implements OnInit, OnDestroy {
   }
 
   showChart(): boolean {
-    return this.lineChartData.length > 0;
+    return true;
+  }
+
+  onSelect(data: string): void {
+    console.log('Item clicked', JSON.parse(JSON.stringify(data)));
+  }
+
+  onActivate(data: string): void {
+    console.log('Activate', JSON.parse(JSON.stringify(data)));
+  }
+
+  onDeactivate(data: string): void {
+    console.log('Deactivate', JSON.parse(JSON.stringify(data)));
   }
 }

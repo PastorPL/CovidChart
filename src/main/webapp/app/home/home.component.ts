@@ -91,7 +91,7 @@ export class HomeComponent implements OnInit, OnDestroy {
     //   labels.push(entry.lastUpdate?.format('DD-MM-YYYY')!);
     // }
 
-    this.lineChartDataService.addData({ data: dataNumbers, label: country });
-    this.lineChartDataService.setLabel(updateTimes);
+    // this.lineChartDataService.addData({ data: dataNumbers, label: country });
+    // this.lineChartDataService.setLabel(updateTimes);
   }
 }
