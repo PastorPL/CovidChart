@@ -23,3 +23,6 @@ spring:
   data:
     mongodb:
       uri: ${MONGODB_URI}?authMode=scram-sha1
+    cloud:
+      config:
+        fail-fast: false
