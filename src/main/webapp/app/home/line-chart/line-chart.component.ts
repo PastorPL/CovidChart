@@ -1,20 +1,17 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, Component, OnDestroy, OnInit } from '@angular/core';
 import { GitHubService } from 'app/shared/util/git-hub.service';
 import { LineChartDataService } from 'app/home/line-chart/line-chart-data.service';
 import { Subscription } from 'rxjs';
-import { multi } from './data';
 
 @Component({
   selector: 'jhi-line-chart',
   templateUrl: './line-chart.component.html',
   styleUrls: ['./line-chart.component.scss']
 })
-export class LineChartComponent implements OnInit, OnDestroy {
+export class LineChartComponent implements OnInit, OnDestroy, AfterViewInit {
   dataSub!: Subscription;
-  labelSub!: Subscription;
 
   multi: any[] = [];
-  view: any[] = [700, 300];
 
   // options
   legend = true;
@@ -32,15 +29,17 @@ export class LineChartComponent implements OnInit, OnDestroy {
     domain: ['#5AA454', '#E44D25', '#CFC0BB', '#7aa3e5', '#a8385d', '#aae3f5']
   };
 
-  constructor(private githubService: GitHubService, private lineChartDataService: LineChartDataService) {
-    Object.assign(this, { multi });
-  }
+  constructor(private githubService: GitHubService, private lineChartDataService: LineChartDataService) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.dataSub = this.lineChartDataService.dataSubject.subscribe(e => {
+      console.log(e);
+      this.multi = e;
+    });
+  }
 
   ngOnDestroy(): void {
     this.dataSub.unsubscribe();
-    this.labelSub.unsubscribe();
   }
 
   showChart(): boolean {
@@ -57,5 +56,9 @@ export class LineChartComponent implements OnInit, OnDestroy {
 
   onDeactivate(data: string): void {
     console.log('Deactivate', JSON.parse(JSON.stringify(data)));
+  }
+
+  ngAfterViewInit(): void {
+    this.multi = [...this.multi];
   }
 }

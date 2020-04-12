@@ -6,10 +6,9 @@ import { AccountService } from 'app/core/auth/account.service';
 import { Account } from 'app/core/user/account.model';
 import { GitHubService } from 'app/shared/util/git-hub.service';
 import { first } from 'rxjs/operators';
-import { LineChartDataService } from 'app/home/line-chart/line-chart-data.service';
+import { LineChartDataService, SeriesItem } from 'app/home/line-chart/line-chart-data.service';
 import { IEntry } from 'app/shared/model/entry.model';
 import * as moment from 'moment';
-import { Moment } from 'moment';
 
 @Component({
   selector: 'jhi-home',
@@ -34,9 +33,6 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
     this.githubService.getLastUpdate().subscribe(value => {
       this.lastUpdate = moment(value.lastUpdate).format('D MMM YYYY');
-      /* eslint-disable no-console */
-      console.log(value);
-      /* eslint-enable no-console */
     });
     this.githubService
       .getCountries()
@@ -72,26 +68,19 @@ export class HomeComponent implements OnInit, OnDestroy {
   }
 
   private updateData(entries: IEntry[], country: string): void {
-    const dataNumbers: number[] = [];
-    // const labels: Label[] = [];
-    const updateTimes: Moment[] = [];
-
-    for (const entry of entries) {
-      dataNumbers.push(entry.confirmed!);
-      updateTimes.push(entry.lastUpdate!);
-
-      // labels.push(moment(entry.lastUpdate).format('DD-MM-YYYY'));
+    const series: SeriesItem[] = [];
+    const sortedEntries = entries.sort((a, b) => {
+      return b.lastUpdate!.valueOf() - a.lastUpdate!.valueOf();
+    });
+    for (const entry of sortedEntries) {
+      series.push({ name: moment(entry.lastUpdate).format('DD/MM/YYYY'), value: entry.confirmed! });
     }
 
-    // for (const entry of entries) {
-    //   /* eslint-disable no-console */
-    //   console.log(entry);
-    //   /* eslint-enable no-console */
-    //   dataNumbers.push(entry.confirmed!);
-    //   labels.push(entry.lastUpdate?.format('DD-MM-YYYY')!);
-    // }
+    const newData = {
+      name: country,
+      series
+    };
 
-    // this.lineChartDataService.addData({ data: dataNumbers, label: country });
-    // this.lineChartDataService.setLabel(updateTimes);
+    this.lineChartDataService.addSeries(newData);
   }
 }

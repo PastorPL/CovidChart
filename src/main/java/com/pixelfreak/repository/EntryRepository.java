@@ -18,6 +18,6 @@ public interface EntryRepository extends MongoRepository<Entry, String>, EntryRe
 
     Entry findFirstByOrderByLastUpdateDesc();
 
-    List<Entry> findByCountry(String country);
+    List<Entry> findByCountryOrderByLastUpdateAsc(String country);
 
 }
