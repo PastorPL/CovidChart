@@ -42,6 +42,12 @@ export class HomeComponent implements OnInit, OnDestroy {
       .pipe(first())
       .subscribe(countries => {
         this.files = countries;
+        this.githubService
+          .getProvince(this.files[0])
+          .pipe(first())
+          .subscribe(countries => {
+            this.province = countries;
+          });
       });
   }
 
