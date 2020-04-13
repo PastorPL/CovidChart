@@ -20,4 +20,6 @@ public interface EntryRepository extends MongoRepository<Entry, String>, EntryRe
 
     List<Entry> findByCountryOrderByLastUpdateAsc(String country);
 
+    List<Entry> findByCountryAndProvinceOrderByLastUpdateAsc(String country, String province);
+
 }

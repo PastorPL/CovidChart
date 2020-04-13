@@ -19,8 +19,11 @@ export class HomeComponent implements OnInit, OnDestroy {
   account: Account | null = null;
   authSubscription?: Subscription;
   files: string[] = [];
+  province: string[] = [];
   loadingFiles = false;
   lastUpdate = '';
+  showChart = false;
+  numberOfCountries = 0;
 
   constructor(
     private accountService: AccountService,
@@ -32,7 +35,7 @@ export class HomeComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     this.authSubscription = this.accountService.getAuthenticationState().subscribe(account => (this.account = account));
     this.githubService.getLastUpdate().subscribe(value => {
-      this.lastUpdate = moment(value.lastUpdate).format('D MMM YYYY');
+      this.lastUpdate = moment(value.lastUpdate).format('D MMM YY');
     });
     this.githubService
       .getCountries()
@@ -60,14 +63,16 @@ export class HomeComponent implements OnInit, OnDestroy {
     this.loadingFiles = true;
   }
 
-  onNewData(country: string): void {
+  onNewData(country: string, province: string): void {
+    this.showChart = true;
     this.githubService
-      .getCountry(country)
+      .getCountryWithProvinceData(country, province)
       .pipe(first())
-      .subscribe(data => this.updateData(data, country));
+      .subscribe(data => this.updateData(data, country, province));
+    this.numberOfCountries++;
   }
 
-  private updateData(entries: IEntry[], country: string): void {
+  private updateData(entries: IEntry[], country: string, province: string): void {
     const series: SeriesItem[] = [];
     const sortedEntries = entries.sort((a, b) => {
       return b.lastUpdate!.valueOf() - a.lastUpdate!.valueOf();
@@ -77,10 +82,25 @@ export class HomeComponent implements OnInit, OnDestroy {
     }
 
     const newData = {
-      name: country,
+      name: country + '(' + province + ')',
       series
     };
 
     this.lineChartDataService.addSeries(newData);
+  }
+
+  onChange(e: any): void {
+    this.githubService
+      .getProvince(e.target.value)
+      .pipe(first())
+      .subscribe(countries => {
+        this.province = countries;
+      });
+  }
+
+  onReset(): void {
+    this.showChart = false;
+    this.numberOfCountries = 0;
+    this.lineChartDataService.reset();
   }
 }

@@ -18,6 +18,14 @@ export class GitHubService {
     return this.http.get(SERVER_API_URL + '/api/files/country/' + country) as Observable<IEntry[]>;
   }
 
+  getProvince(country: string): Observable<string[]> {
+    return this.http.get(SERVER_API_URL + '/api/files/provinces/' + country) as Observable<string[]>;
+  }
+
+  getCountryWithProvinceData(country: string, province: string): Observable<IEntry[]> {
+    return this.http.get(SERVER_API_URL + '/api/files/countryAndProvince/' + country + '/' + province) as Observable<IEntry[]>;
+  }
+
   getLastUpdate(): Observable<IEntry> {
     return this.http.get(SERVER_API_URL + '/api/files/lastUpdate') as Observable<IEntry>;
   }

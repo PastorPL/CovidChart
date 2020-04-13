@@ -21,7 +21,8 @@ eureka:
 
 spring:
   profiles:
-    include: -swagger
+    include:
+      - swagger
   data:
     mongodb:
       uri: ${MONGODB_URI}?authMode=scram-sha1&retryWrites=false

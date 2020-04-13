@@ -13,10 +13,9 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.LocalDate;
-import java.time.Month;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -31,115 +30,63 @@ public class GitHubService {
         this.entryRepository = entryRepository;
     }
 
-    public void updateEntriesFromGithub()  {
+    public void updateEntriesFromGithub() {
         final Entry lastUpdateEntry = this.entryRepository.findFirstByOrderByLastUpdateDesc();
-        this.log.debug("Updating...");
-        if (lastUpdateEntry!=null && lastUpdateEntry.getLastUpdate().isEqual(LocalDate.now())) {
+        if (lastUpdateEntry != null && lastUpdateEntry.getLastUpdate().isEqual(LocalDate.now())) {
             return;
         }
-
-        this.log.debug("Still Updating...");
-        LocalDate startUpdateFrom;
-        if (lastUpdateEntry == null) {
-            startUpdateFrom = LocalDate.of(2020, Month.JANUARY, 22);
-        } else {
-            startUpdateFrom = lastUpdateEntry.getLastUpdate();
-        }
-
-        startUpdateFrom.datesUntil(LocalDate.now().plus(1, ChronoUnit.DAYS)).forEach(date -> this.getEntries(date).forEach(this.entryRepository::save));
+        this.entryRepository.deleteAll();
+        this.getEntries();
     }
 
-    private List<Entry> getEntries(LocalDate date) {
-        this.log.debug("Updating for date: "+date.toString());
+    private void getEntries() {
         try {
-            final List<Entry> entryList = new ArrayList<>();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("MM-dd-yyyy");
-            final String baseurl = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/" + date.format(formatter) + ".csv";
-            URL url = new URL(baseurl);
+            final String baseURL = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv";
+            URL url = new URL(baseURL);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
             if (connection.getResponseCode() == 200) {
                 try (InputStreamReader streamReader = new InputStreamReader(connection.getInputStream())) {
                     BufferedReader in = new BufferedReader(streamReader);
                     Iterable<CSVRecord> records = CSVFormat.DEFAULT.withFirstRecordAsHeader().parse(in);
                     for (CSVRecord record : records) {
-                        if(date.isEqual(LocalDate.of(2020, 3, 22))){
-                            this.processCVSFileFrom2203(entryList, record);
-                        } else if(date.isBefore(LocalDate.of(2020, 3, 22))) {
-                            this.processCVSFileBefor2203(entryList, record);
-                        } else {
-                            this.processCVSFileAfter2203(entryList, record);
-                        }
-
+                        this.processCSVGlobal(record);
                     }
                 }
             }
-            return entryList;
         } catch (Exception e) {
             e.printStackTrace();
             log.error(e.getLocalizedMessage());
-            return new ArrayList<>();
         }
     }
 
-    private void processCVSFileAfter2203(List<Entry> entryList, CSVRecord record) {
+    private void processCSVGlobal(CSVRecord record) {
         final Map<String, String> valueMap = record.toMap();
-        final Entry entry = new Entry();
-        entry.setProvince(valueMap.get("Province_State"));
-        entry.setCountry(valueMap.get("Country_Region"));
-        entry.setConfirmed(Integer.parseInt(valueMap.get("Confirmed")));
-        entry.setDeaths(Integer.parseInt(valueMap.get("Deaths")));
-        entry.setRecovered(Integer.parseInt(valueMap.get("Recovered")));
-        entry.setLat(Double.parseDouble(valueMap.get("Lat")));
-        entry.setLon(Double.parseDouble(valueMap.get("Long_")));
-        String lastUpdateString = valueMap.get("Last_Update");
-        lastUpdateString = lastUpdateString.split(" ")[0];
-        final DateTimeFormatter localDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd");
-        final LocalDate localDate = LocalDate.parse(lastUpdateString, localDateFormat);
-        entry.setLastUpdate(localDate);
-        entryList.add(entry);
-    }
 
-    private void processCVSFileFrom2203(List<Entry> entryList, CSVRecord record) {
-        final Map<String, String> valueMap = record.toMap();
-        final Entry entry = new Entry();
-        entry.setProvince(valueMap.get("Province_State"));
-        entry.setCountry(valueMap.get("Country_Region"));
-        entry.setConfirmed(Integer.parseInt(valueMap.get("Confirmed")));
-        entry.setDeaths(Integer.parseInt(valueMap.get("Deaths")));
-        entry.setRecovered(Integer.parseInt(valueMap.get("Recovered")));
-        entry.setLat(Double.parseDouble(valueMap.get("Lat")));
-        entry.setLon(Double.parseDouble(valueMap.get("Long_")));
-        String lastUpdateString = valueMap.get("Last_Update");
-        lastUpdateString = lastUpdateString.split(" ")[0];
-        final DateTimeFormatter localDateFormat = DateTimeFormatter.ofPattern("MM/dd/yy");
-        final LocalDate localDate = LocalDate.parse(lastUpdateString, localDateFormat);
-        entry.setLastUpdate(localDate);
-        entryList.add(entry);
-    }
+        final List<String> standardHeaders = Arrays.asList("Province/State", "Country/Region", "Lat", "Long");
+        final String province = valueMap.get(standardHeaders.get(0));
+        final String country = valueMap.get(standardHeaders.get(1));
+        final Double lat = Double.parseDouble(valueMap.get(standardHeaders.get(2)));
+        final Double lon = Double.parseDouble(valueMap.get(standardHeaders.get(3)));
 
-    private void processCVSFileBefor2203(List<Entry> entryList, CSVRecord record) {
-        final Map<String, String> valueMap = record.toMap();
-        final Entry entry = new Entry();
-        entry.setProvince(valueMap.get("Province/State"));
-        entry.setCountry(valueMap.get("Country/Region"));
-        entry.setConfirmed(Integer.parseInt(valueMap.get("Confirmed")));
-        entry.setDeaths(Integer.parseInt(valueMap.get("Deaths")));
-        entry.setRecovered(Integer.parseInt(valueMap.get("Recovered")));
-        entry.setLat(Double.parseDouble(valueMap.get("Latitude")));
-        entry.setLon(Double.parseDouble(valueMap.get("Longitude")));
-        String lastUpdateString = valueMap.get("Last Update");
-        if (lastUpdateString.contains("T")) {
-            lastUpdateString = lastUpdateString.split("T")[0];
-            final DateTimeFormatter localDateFormat = DateTimeFormatter.ofPattern("yyyy-MM-d");
-            final LocalDate localDate = LocalDate.parse(lastUpdateString, localDateFormat);
+        final DateTimeFormatter localDateFormat = DateTimeFormatter.ofPattern("M/d/y");
+
+        List<Entry> entryList = new ArrayList<>();
+        for (String key : valueMap.keySet()) {
+            if (standardHeaders.contains(key)) {
+                continue;
+            }
+            final Entry entry = new Entry();
+            entry.setProvince(province);
+            entry.setCountry(country);
+            entry.setLat(lat);
+            entry.setLon(lon);
+            final LocalDate localDate = LocalDate.parse(key, localDateFormat);
             entry.setLastUpdate(localDate);
-        } else {
-            lastUpdateString = lastUpdateString.split(" ")[0];
-            final DateTimeFormatter localDateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-            final LocalDate localDate = LocalDate.parse(lastUpdateString, localDateFormat);
-            entry.setLastUpdate(localDate);
+            entry.setConfirmed(Integer.parseInt(valueMap.get(key)));
+            entryList.add(entry);
         }
-        entryList.add(entry);
+
+        this.entryRepository.insert(entryList);
     }
 
 }

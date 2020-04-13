@@ -6,4 +6,6 @@ public interface EntryRepositoryCustom {
 
     List<String> findAllCountryNames();
 
+    List<String> findAllProvinceForCountry(String country);
+
 }

@@ -21,8 +21,8 @@ export class LineChartComponent implements OnInit, OnDestroy, AfterViewInit {
   yAxis = true;
   showYAxisLabel = true;
   showXAxisLabel = true;
-  xAxisLabel = 'Year';
-  yAxisLabel = 'Population';
+  xAxisLabel = 'Date';
+  yAxisLabel = 'Confirmed';
   timeline = true;
 
   colorScheme = {
