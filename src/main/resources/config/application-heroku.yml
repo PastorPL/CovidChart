@@ -20,6 +20,8 @@ eureka:
       defaultZone: ${JHIPSTER_REGISTRY_URL}/eureka/
 
 spring:
+  profiles:
+    include: -swagger
   data:
     mongodb:
       uri: ${MONGODB_URI}?authMode=scram-sha1&retryWrites=false

@@ -84,8 +84,6 @@ management:
             enabled: true
 
 spring:
-  profiles:
-    include: -swagger
   application:
     name: CovChart
   jmx:
